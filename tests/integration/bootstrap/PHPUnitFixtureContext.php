@@ -3,6 +3,12 @@
 namespace Tests\Integration\Bootstrap;
 
 use Behat\Behat\Context\Context;
+use Tests\Integration\Bootstrap\Database\DataSet\YamlDataSet;
+use Tests\Integration\Bootstrap\Database\DefaultConnection;
+use Tests\Integration\Bootstrap\Database\DefaultTester;
+use Tests\Integration\Bootstrap\Database\Operation\Composite;
+use Tests\Integration\Bootstrap\Database\Operation\Factory;
+use Tests\Integration\Bootstrap\Database\Operation\Truncate;
 
 class PHPUnitFixtureContext implements Context
 {
@@ -171,15 +177,17 @@ class PHPUnitFixtureContext implements Context
     public function getConnection()
     {
         // Get the unittesting db connection
-        $config = config('ohanzee-db.'.$this->database_connection);
+        $config = config('ohanzee-db.' . $this->database_connection);
 
         if ($config['type'] !== 'pdo') {
             // Replace MySQLi with MySQL since MySQLi isn't valid for a DSN
             $type = $config['type'] === 'MySQLi' ? 'MySQL' : $config['type'];
 
-            $config['connection']['dsn'] = strtolower($type).':'.
-            'host='.$config['connection']['hostname'].';'.
-            'dbname='.$config['connection']['database'];
+            $config['connection']['dsn'] = strtolower($type) . ':' .
+            'host=' . $config['connection']['hostname'] . ';' .
+            'port=' . $config['connection']['port'] . ';' .
+            'dbname=' . $config['connection']['database'] . ';' .
+            'unix_socket=' . $config['connection']['unix_socket'];
         }
 
         $pdo = new \PDO(
@@ -199,7 +207,7 @@ class PHPUnitFixtureContext implements Context
      */
     protected function getDataSet($dataset)
     {
-        return new \PHPUnit_Extensions_Database_DataSet_YamlDataSet(
+        return new YamlDataSet(
             __DIR__ . '/../../datasets/' . $dataset . '.yml'
         );
     }
@@ -252,7 +260,7 @@ class PHPUnitFixtureContext implements Context
      */
     protected function newDatabaseTester()
     {
-        return new \PHPUnit_Extensions_Database_DefaultTester($this->getConnection());
+        return new DefaultTester($this->getConnection());
     }
 
     /**
@@ -265,9 +273,9 @@ class PHPUnitFixtureContext implements Context
     {
         //return PHPUnit_Extensions_Database_Operation_Factory::CLEAN_INSERT();
         $cascadeTruncates = true;
-        return new \PHPUnit_Extensions_Database_Operation_Composite([
-            new \Tests\Support\MySQL55Truncate($cascadeTruncates),
-            \PHPUnit_Extensions_Database_Operation_Factory::INSERT()
+        return new Composite([
+            Factory::TRUNCATE($cascadeTruncates),
+            Factory::INSERT()
         ]);
     }
 
@@ -278,7 +286,7 @@ class PHPUnitFixtureContext implements Context
      */
     protected function getTearDownOperation()
     {
-        return \PHPUnit_Extensions_Database_Operation_Factory::NONE();
+        return Factory::NONE();
     }
 
     /**
@@ -289,8 +297,8 @@ class PHPUnitFixtureContext implements Context
      * @param string $schema
      * @return PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection
      */
-    protected function createDefaultDBConnection(\PDO $connection, $schema = '')
+    protected function createDefaultDBConnection($connection, $schema = '')
     {
-        return new \PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($connection, $schema);
+        return new DefaultConnection($connection, $schema);
     }
 }

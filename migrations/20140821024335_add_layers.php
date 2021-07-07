@@ -35,21 +35,4 @@ class AddLayers extends AbstractMigration
                 ])
             ->create();
     }
-
-
-    /**
-     * Migrate Up.
-     */
-    public function up()
-    {
-        // noop, uses change()
-    }
-
-    /**
-     * Migrate Down.
-     */
-    public function down()
-    {
-        // noop, uses change()
-    }
 }

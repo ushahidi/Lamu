@@ -3,8 +3,9 @@
 namespace v5\Http\Controllers;
 
 use Illuminate\Auth\Access\Gate;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Ramsey\Uuid\Uuid;
 use Ushahidi\App\Validator\LegacyValidator;
 use v5\Http\Resources\SurveyCollection;
@@ -229,7 +230,7 @@ class SurveyController extends V5Controller
     private function normalizeCategoryOptions(array $options)
     {
         if (!$this->isArrayOfNumbers($options)) {
-            return array_flatten(array_pluck($options, 'id'));
+            return Arr::flatten(Arr::pluck($options, 'id'));
         }
         return $options;
     }

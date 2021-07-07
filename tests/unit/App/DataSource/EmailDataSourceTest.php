@@ -24,7 +24,7 @@ use phpmock\mockery\PHPMockery;
 class EmailDataSourceTest extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -78,7 +78,7 @@ class EmailDataSourceTest extends TestCase
 
         $response = $email->send('test@ushahidi.com', "A message", "A title");
 
-        $this->assertInternalType('array', $response);
+        $this->assertIsArray($response);
         $this->assertEquals('sent', $response[0]);
         $this->assertEquals(false, $response[1]);
     }

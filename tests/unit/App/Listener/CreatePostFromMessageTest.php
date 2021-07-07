@@ -17,7 +17,7 @@ use Mockery as M;
  */
 class CreatePostFromMessageTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setup();
 
@@ -32,7 +32,7 @@ class CreatePostFromMessageTest extends TestCase
         );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

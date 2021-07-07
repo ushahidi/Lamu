@@ -11,6 +11,7 @@
  */
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Ushahidi\Core\Entity\PostRepository;
 use Ushahidi\Core\Entity\ContactRepository;
 use Ushahidi\Core\Entity\ConfigRepository;
@@ -129,6 +130,7 @@ class ObfuscateData extends Command
             return;
         }
         $this->info('Data scrubbing complete.');
+        return 0;
     }
 
     protected function isThisAMultisiteInstall()
@@ -359,7 +361,7 @@ class ObfuscateData extends Command
         //in all cases, if the username is specified, we create an admin user and password
         if ($this->option('admin-username')) { // checking length in fire()
             $adminEmail = $this->option('admin-username');
-            $adminPassword = str_random(25);
+            $adminPassword = Str::random(25);
             $this->info("Generated password: ".$adminPassword);
             $id = $this->saveAdminUser($adminEmail, $adminPassword);
             $this->info("Created admin user ".$adminEmail." with Id: ".$id);

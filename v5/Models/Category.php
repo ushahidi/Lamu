@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use Ushahidi\Core\Entity\Permission;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use v5\Models\Scopes\CategoryAllowed;
 
 class Category extends BaseModel

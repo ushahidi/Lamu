@@ -25,12 +25,12 @@ use Mockery as M;
 class CheckDemoExpirationTest extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

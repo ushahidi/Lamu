@@ -31,7 +31,7 @@ use Mockery as M;
 class ReceiveMessageTest extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setup();
 
@@ -79,7 +79,7 @@ class ReceiveMessageTest extends TestCase
         $this->app->instance(\Ushahidi\Core\Entity\ConfigRepository::class, $configRepo);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

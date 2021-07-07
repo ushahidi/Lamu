@@ -24,7 +24,7 @@ use Mockery as M;
 class SignatureAuthTest extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -33,7 +33,7 @@ class SignatureAuthTest extends TestCase
         putenv('PLATFORM_SHARED_SECRET=asharedsecret');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         putenv('PLATFORM_SHARED_SECRET=' . $this->originalSecret);
 

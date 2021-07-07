@@ -1,7 +1,7 @@
 <?php
 namespace v5\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 use Ushahidi\Core\Entity\Post;
 use v5\Models\Post\Post as v5Post;

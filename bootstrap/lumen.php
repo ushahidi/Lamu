@@ -61,7 +61,7 @@ $app->singleton(
 $app->middleware([
     Ushahidi\App\Http\Middleware\AddContentLength::class,
     Ushahidi\App\Multisite\DetectSiteMiddleware::class,
-    Barryvdh\Cors\HandleCors::class,
+    Fruitcake\Cors\HandleCors::class,
     Ushahidi\App\Http\Middleware\MaintenanceMode::class,
     Ushahidi\App\Http\Middleware\SetLocale::class,
     v5\Http\Middleware\V5GlobalScopes::class,
@@ -96,10 +96,11 @@ $app->register(Ushahidi\App\Providers\AppServiceProvider::class);
 $app->register(Ushahidi\App\Providers\AuthServiceProvider::class);
 $app->register(Ushahidi\App\Providers\EventServiceProvider::class);
 $app->register(Ushahidi\App\Providers\PassportServiceProvider::class);
-$app->register(Barryvdh\Cors\ServiceProvider::class);
-$app->register(Sentry\SentryLaravel\SentryLumenServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
+$app->register(Sentry\Laravel\ServiceProvider::class);
 $app->register(v5\Providers\MorphServiceProvider::class);
 $app->register(v5\Providers\EventServiceProvider::class);
+$app->register(Laravel\Tinker\TinkerServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

@@ -17,7 +17,9 @@ use Behat\Gherkin\Node\PyStringNode;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Yaml\Yaml;
+use Illuminate\Support\Arr;
 use stdClass;
+use PHPUnit\Framework\Assert;
 
 /**
  * Rest context.
@@ -505,7 +507,7 @@ class RestContext implements Context
      */
     public function theResponseIsEmpty()
     {
-        \PHPUnit_Framework_Assert::assertEquals(0, $this->response->getBody()->getSize());
+        Assert::assertEquals(0, $this->response->getBody()->getSize());
     }
     /**
      * @Given /^the response has a "([^"]*)" property$/
@@ -517,7 +519,7 @@ class RestContext implements Context
         $data = json_decode($this->response->getBody(true), true);
         $this->theResponseIsJson();
 
-        if (array_get($data, $propertyName) === null) {
+        if (Arr::get($data, $propertyName) === null) {
             throw new \Exception("Property '".$propertyName."' is not set!\n");
         }
     }
@@ -550,7 +552,7 @@ class RestContext implements Context
 
         $this->theResponseIsJson();
 
-        if (array_get($data, $propertyName) !== null) {
+        if (Arr::get($data, $propertyName) !== null) {
             throw new \Exception("Property '".$propertyName."' is set but should not be!\n");
         }
     }
@@ -578,7 +580,7 @@ class RestContext implements Context
         $data = json_decode($this->response->getBody(true), true);
         $this->theResponseIsJson();
 
-        $actualPropertyValue = array_get($data, $propertyName);
+        $actualPropertyValue = Arr::get($data, $propertyName);
 
         if ($actualPropertyValue === null) {
             throw new \Exception("Property '".$propertyName."' is not set!\n");
@@ -602,7 +604,7 @@ class RestContext implements Context
 
         $this->theResponseIsJson();
 
-        $actualPropertyValue = array_get($data, $propertyName);
+        $actualPropertyValue = Arr::get($data, $propertyName);
 
         if ($actualPropertyValue === null) {
             throw new \Exception("Property '".$propertyName."' is not set!\n");
@@ -621,7 +623,7 @@ class RestContext implements Context
 
         $this->theResponseIsJson();
 
-        $actualPropertyValue = array_get($data, $propertyName);
+        $actualPropertyValue = Arr::get($data, $propertyName);
 
         if ($actualPropertyValue === null) {
             throw new \Exception("Property '".$propertyName."' is not set!\n");
@@ -641,10 +643,10 @@ class RestContext implements Context
 
         $this->theResponseIsJson();
 
-        $actualPropertyValue = array_get($data, $propertyName);
+        $actualPropertyValue = Arr::get($data, $propertyName);
 
         if ($actualPropertyValue === null) {
-            throw new Exception("Property '".$propertyName."' is not set!\n");
+            throw new \Exception("Property '".$propertyName."' is not set!\n");
         }
 
         if (is_array($actualPropertyValue) and ! in_array($propertyContainsValue, $actualPropertyValue)) {
@@ -674,10 +676,10 @@ class RestContext implements Context
 
         $this->theResponseIsJson();
 
-        $actualPropertyValue = array_get($data, $propertyName);
+        $actualPropertyValue = Arr::get($data, $propertyName);
 
         if ($actualPropertyValue === null) {
-            throw new Exception("Property '".$propertyName."' is not set!\n");
+            throw new \Exception("Property '".$propertyName."' is not set!\n");
         }
 
         if (is_array($actualPropertyValue) and in_array($propertyContainsValue, $actualPropertyValue)) {
@@ -707,7 +709,7 @@ class RestContext implements Context
 
         $this->theResponseIsJson();
 
-        $actualPropertyValue = array_get($data, $propertyName);
+        $actualPropertyValue = Arr::get($data, $propertyName);
 
         if ($actualPropertyValue === null) {
             throw new \Exception("Property '".$propertyName."' is not set!\n");
@@ -732,7 +734,7 @@ class RestContext implements Context
 
         $this->theResponseIsJson();
 
-        $actualPropertyValue = array_get($data, $propertyName);
+        $actualPropertyValue = Arr::get($data, $propertyName);
 
         if ($actualPropertyValue === null) {
             throw new \Exception("Property '".$propertyName."' is not set!\n");
@@ -765,7 +767,7 @@ class RestContext implements Context
 
         $this->theResponseIsJson();
 
-        $actualPropertyValue = array_get($data, $propertyName);
+        $actualPropertyValue = Arr::get($data, $propertyName);
 
         if (!empty($actualPropertyValue)) {
             throw new \Exception("Property '{$propertyName}' is not empty but '{$actualPropertyValue}'\n");
@@ -779,7 +781,6 @@ class RestContext implements Context
     {
         if ((string)$this->response->getStatusCode() !== $httpStatus) {
             $data = json_decode($this->response->getBody(true), true);
-            var_dump($data);
 
             throw new \Exception('HTTP code does not match '.$httpStatus.
                 ' (actual: '.$this->response->getStatusCode().')');
@@ -908,16 +909,17 @@ HTTP/{$this->response->getProtocolVersion()} {$this->response->getStatusCode()} 
      */
     public function thatTheOauthTokenIs($tokenId)
     {
-        $key = new \League\OAuth2\Server\CryptKey("file://".\Laravel\Passport\Passport::keyPath('oauth-private.key'));
+        $keyPath = 'file://' . \Laravel\Passport\Passport::keyPath('passport/oauth-private.key');
+        $key = new \League\OAuth2\Server\CryptKey($keyPath);
         $scope = new \Laravel\Passport\Bridge\Scope('*');
         $client = new \Laravel\Passport\Bridge\Client('demoapp', 'demoapp', '/');
 
-        $accessToken = new \Laravel\Passport\Bridge\AccessToken($this->tokenUserMap[$tokenId], [$scope]);
+        $accessToken = new \Laravel\Passport\Bridge\AccessToken($this->tokenUserMap[$tokenId], [$scope], $client);
+        $accessToken->setPrivateKey($key);
         $accessToken->setIdentifier($tokenId);
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('P1D')));
-        $accessToken->setClient($client);
-        $token = $accessToken->convertToJwt($key);
+        $accessToken->setExpiryDateTime((new \DateTimeImmutable())->add(new \DateInterval('P1D')));
+        $token = $accessToken->__toString();
 
-        $this->headers['Authorization'] = "Bearer $token";
+        $this->headers['Authorization'] = 'Bearer ' . $token;
     }
 }
